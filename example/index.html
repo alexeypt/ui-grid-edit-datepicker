@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html ng-app="UiGridDatepicker">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Ui-grid-datepicker Test</title>
+    <link href="libs/angular-ui-grid/ui-grid.css" rel="stylesheet" />
+    <link href="libs/bootstrap/bootstrap.css" rel="stylesheet" />
+    <link href="style.css" rel="stylesheet" />
+    <script src="libs/jquery/jquery.js"></script>
+    <script src="libs/angular/angular.js"></script>
+    <script src="libs/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script src="libs/angular-ui-grid/ui-grid.js"></script>
+    <script src="js/grid-controller.js"></script>
+    <script src="js/text-date-filter.js"></script>
+    <script src="js/ui-grid-edit-datepicker.js"></script>
+
+</head>
+<body ng-controller="GridController">
+    <div id="grid" ui-grid="gridOptions" ui-grid-edit ui-grid-cellnav ui-grid-move-columns class="grid"></div>
+</body>
+</html>
