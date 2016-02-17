@@ -2,8 +2,8 @@ var app = angular.module('ui.grid.edit');
 
 app.directive('uiGridEditDatepicker', ['$timeout', '$document', 'uiGridConstants', 'uiGridEditConstants', function($timeout, $document, uiGridConstants, uiGridEditConstants) {
     return {
-        template: function(element, attrs) {
-            var html = '<div class="datepicker-wrapper" ><input uib-datepicker-popup is-open="isOpen" ng-model="' + attrs.rowField + '" ng-change="changeDate($event)" on-open-focus="false" disabled/></div>';
+        template: function(element, attrs) {	
+			var html = '<div class="datepicker-wrapper" ><input type="text" uib-datepicker-popup is-open="isOpen" ng-model="datePickerValue" ng-change="changeDate($event)"/></div>';
             return html;
         },
         require: ['?^uiGrid', '?^uiGridRenderContainer'],
@@ -57,13 +57,13 @@ app.directive('uiGridEditDatepicker', ['$timeout', '$document', 'uiGridConstants
                         datepickerElement.offset(newOffsetValues);
                         datepickerElement.css("visibility", "visible");
                     };
-
+					
                     $timeout(function() {
                         setCorrectPosition();
                     }, 0);
-
+					
+					$scope.datePickerValue = new Date($scope.row.entity[$scope.col.field]);
                     $scope.isOpen = true;
-
                     var uiGridCtrl = controllers[0];
                     var renderContainerCtrl = controllers[1];
 
@@ -76,12 +76,12 @@ app.directive('uiGridEditDatepicker', ['$timeout', '$document', 'uiGridConstants
                     };
 
                     var onCellClick = function (evt) {
-                        console.log('click')
                         angular.element(document.querySelectorAll('.ui-grid-cell-contents')).off('click', onCellClick);
                         $scope.stopEdit(evt);
                     };
 
                     $scope.changeDate = function (evt) {
+						$scope.row.entity[$scope.col.field] = $scope.datePickerValue;
                         $scope.stopEdit(evt);
                     };
 

@@ -43,7 +43,7 @@ app.controller('GridController', ['$scope', function ($scope) {
             { name: 'Date',
                 field: 'date',
                 cellFilter: 'textDate:"M/d/yyyy"',
-                editableCellTemplate: '<div><form name="inputForm"><div ui-grid-edit-datepicker row-field="MODEL_COL_FIELD" ng-class="\'colt\' + col.uid"></div></form></div>'
+                editableCellTemplate: '<div><form name="inputForm"><div ui-grid-edit-datepicker ng-class="\'colt\' + col.uid"></div></form></div>'
             }
         ],
         enableCellEditOnFocus: true
