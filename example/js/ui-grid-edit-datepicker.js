@@ -3,7 +3,7 @@ var app = angular.module('ui.grid.edit');
 app.directive('uiGridEditDatepicker', ['$timeout', '$document', 'uiGridConstants', 'uiGridEditConstants', function($timeout, $document, uiGridConstants, uiGridEditConstants) {
     return {
         template: function(element, attrs) {	
-			var html = '<div class="datepicker-wrapper" ><input type="text" uib-datepicker-popup datepicker-append-to-body="true" is-open="isOpen" ng-model="datePickerValue" ng-change="changeDate($event)"/></div>';
+			var html = '<div class="datepicker-wrapper" ><input type="text" uib-datepicker-popup datepicker-append-to-body="true" is-open="isOpen" ng-model="datePickerValue" ng-change="changeDate($event)" popup-placement="auto top"/></div>';
             return html;
         },
         require: ['?^uiGrid', '?^uiGridRenderContainer'],
@@ -29,7 +29,7 @@ app.directive('uiGridEditDatepicker', ['$timeout', '$document', 'uiGridConstants
                             offset: cellElement.offset()
                         };
 
-                        var datepickerElement = $('body > .dropdown-menu');
+                        var datepickerElement = $('body > .dropdown-menu, body > div > .dropdown-menu');
                         var datepickerPosition = {
                             width: datepickerElement.outerWidth(),
                             height: datepickerElement.outerHeight()
@@ -134,7 +134,7 @@ app.directive('uiGridEditDatepicker', ['$timeout', '$document', 'uiGridConstants
 
                     $scope.$on('$destroy', function () {
                         angular.element(window).off('click', onWindowClick);
-                        $('body > .dropdown-menu').remove();
+                        $('body > .dropdown-menu, body > div > .dropdown-menu').remove();
                     });
 
                     $scope.stopEdit = function(evt) {
