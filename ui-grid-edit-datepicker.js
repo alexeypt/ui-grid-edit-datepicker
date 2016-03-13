@@ -3,7 +3,7 @@ var app = angular.module('ui.grid.edit');
 app.directive('uiGridEditDatepicker', ['$timeout', '$document', 'uiGridConstants', 'uiGridEditConstants', function($timeout, $document, uiGridConstants, uiGridEditConstants) {
     return {
         template: function(element, attrs) {
-            var html = '<div class="datepicker-wrapper" ><input uib-datepicker-popup is-open="isOpen" ng-model="' + attrs.rowField + '" ng-change="changeDate($event)" on-open-focus="false" disabled/></div>';
+            var html = '<div class="datepicker-wrapper" ><input type="text" uib-datepicker-popup datepicker-append-to-body="true" is-open="isOpen" ng-model="datePickerValue" ng-change="changeDate($event)"/></div>';
             return html;
         },
         require: ['?^uiGrid', '?^uiGridRenderContainer'],
@@ -29,11 +29,45 @@ app.directive('uiGridEditDatepicker', ['$timeout', '$document', 'uiGridConstants
                             offset: cellElement.offset()
                         };
 
-                        var datepickerElement = $('ul', cellElement);
+                        var datepickerElement = $('body > .dropdown-menu');
                         var datepickerPosition = {
                             width: datepickerElement.outerWidth(),
                             height: datepickerElement.outerHeight()
                         };
+
+                        var setCorrectTopPositionInGrid = function() {
+                            var topPosition;
+                            var freePixelsOnBottom = gridPosition.height - (cellPosition.offset.top - gridPosition.offset.top) - cellPosition.height;
+                            var freePixelsOnTop = gridPosition.height - freePixelsOnBottom - cellPosition.height;
+                            var requiredPixels = (datepickerPosition.height - cellPosition.height) / 2;
+                            if (freePixelsOnBottom >= requiredPixels && freePixelsOnTop >= requiredPixels) {
+                                topPosition = cellPosition.offset.top - requiredPixels + 10;
+                            } else if (freePixelsOnBottom >= requiredPixels && freePixelsOnTop < requiredPixels) {
+                                topPosition = cellPosition.offset.top - freePixelsOnTop + 10;
+                            } else {
+                                topPosition = gridPosition.height - datepickerPosition.height + gridPosition.offset.top - 20;
+                            }
+                            return topPosition;
+                        };
+
+                        var setCorrectTopPositionInWindow = function() {
+                            var topPosition;
+                            var windowHeight = window.innerHeight - 10;
+
+                            var freePixelsOnBottom = windowHeight - cellPosition.offset.top;
+                            var freePixelsOnTop = windowHeight - freePixelsOnBottom - cellPosition.height;
+                            var requiredPixels = (datepickerPosition.height - cellPosition.height) / 2;
+                            if (freePixelsOnBottom >= requiredPixels && freePixelsOnTop >= requiredPixels) {
+                                topPosition = cellPosition.offset.top - requiredPixels;
+                            } else if (freePixelsOnBottom >= requiredPixels && freePixelsOnTop < requiredPixels) {
+                                topPosition = cellPosition.offset.top - freePixelsOnTop;
+                            } else {
+                                topPosition = windowHeight - datepickerPosition.height - 10;
+                            }
+                            return topPosition;
+                        };
+
+
                         var newOffsetValues = {};
 
                         var isFreeOnRight = (gridPosition.width - (cellPosition.offset.left - gridPosition.offset.left) - cellPosition.width) > datepickerPosition.width;
@@ -43,15 +77,10 @@ app.directive('uiGridEditDatepicker', ['$timeout', '$document', 'uiGridConstants
                             newOffsetValues.left = cellPosition.offset.left - datepickerPosition.width;
                         }
 
-                        var freePixelsOnBottom = gridPosition.height - (cellPosition.offset.top - gridPosition.offset.top) - cellPosition.height;
-                        var freePixelsOnTop = gridPosition.height - freePixelsOnBottom - cellPosition.height;
-                        var requiredPixels = (datepickerPosition.height - cellPosition.height) / 2;
-                        if (freePixelsOnBottom >= requiredPixels && freePixelsOnTop >= requiredPixels) {
-                            newOffsetValues.top = cellPosition.offset.top - requiredPixels + 10;
-                        } else if (freePixelsOnBottom >= requiredPixels && freePixelsOnTop < requiredPixels) {
-                            newOffsetValues.top = cellPosition.offset.top - freePixelsOnTop + 10;
+                        if (datepickerPosition.height < gridPosition.height) {
+                            newOffsetValues.top = setCorrectTopPositionInGrid();
                         } else {
-                            newOffsetValues.top = gridPosition.height - datepickerPosition.height + gridPosition.offset.top - 20;
+                            newOffsetValues.top = setCorrectTopPositionInWindow();
                         }
 
                         datepickerElement.offset(newOffsetValues);
@@ -62,26 +91,33 @@ app.directive('uiGridEditDatepicker', ['$timeout', '$document', 'uiGridConstants
                         setCorrectPosition();
                     }, 0);
 
-                    $scope.isOpen = true;
 
+
+                    $scope.datePickerValue = new Date($scope.row.entity[$scope.col.field]);
+                    $scope.isOpen = true;
                     var uiGridCtrl = controllers[0];
                     var renderContainerCtrl = controllers[1];
 
                     var onWindowClick = function (evt) {
                         var classNamed = angular.element(evt.target).attr('class');
-                        var inDatepicker = (classNamed.indexOf('datepicker-calendar') > -1);
-                        if (!inDatepicker && evt.target.nodeName !== "INPUT") {
+                        if (classNamed) {
+                            var inDatepicker = (classNamed.indexOf('datepicker-calendar') > -1);
+                            if (!inDatepicker && evt.target.nodeName !== "INPUT") {
+                                $scope.stopEdit(evt);
+                            }
+                        }
+                        else {
                             $scope.stopEdit(evt);
                         }
                     };
 
                     var onCellClick = function (evt) {
-                        console.log('click')
                         angular.element(document.querySelectorAll('.ui-grid-cell-contents')).off('click', onCellClick);
                         $scope.stopEdit(evt);
                     };
 
                     $scope.changeDate = function (evt) {
+                        $scope.row.entity[$scope.col.field] = $scope.datePickerValue;
                         $scope.stopEdit(evt);
                     };
 
@@ -98,6 +134,7 @@ app.directive('uiGridEditDatepicker', ['$timeout', '$document', 'uiGridConstants
 
                     $scope.$on('$destroy', function () {
                         angular.element(window).off('click', onWindowClick);
+                        $('body > .dropdown-menu').remove();
                     });
 
                     $scope.stopEdit = function(evt) {

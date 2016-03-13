@@ -2,6 +2,7 @@
 
 }
 
-.datepicker-wrapper ul {
+body > .dropdown-menu {
     visibility: hidden;
+    overflow: visible;
 }
