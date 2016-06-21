@@ -23,7 +23,7 @@ This directive provides ability to use [Bootstrap datepicker](https://angular-ui
   }
   ```
 
-  If you'd like to specify additional settings for [Bootstrap Datepicker](https://angular-ui.github.io/bootstrap/#/datepicker), you should declare object with settings in Grid scope and pass object's name in **datepicker-options** attribute like in the following example:
+  If you'd like to specify additional settings for [Bootstrap Datepicker](https://angular-ui.github.io/bootstrap/#/datepicker), you should declare object with settings in Grid scope and pass object's name in **datepicker-options** attribute like in the following example (it works only from Angular UI Grid 1.2 ):
 
   ```
     $scope.datepickerOptions = {
