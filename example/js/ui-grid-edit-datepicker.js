@@ -3,7 +3,7 @@ var app = angular.module('ui.grid.edit');
 app.directive('uiGridEditDatepicker', ['$timeout', '$document', 'uiGridConstants', 'uiGridEditConstants', function($timeout, $document, uiGridConstants, uiGridEditConstants) {
     return {
         template: function(element, attrs) {	
-			var html = '<div class="datepicker-wrapper" ><input type="text" uib-datepicker-popup datepicker-append-to-body="true" is-open="isOpen" ng-model="datePickerValue" ng-change="changeDate($event)" popup-placement="auto top"/></div>';
+			var html = '<div class="datepicker-wrapper" ><input type="text" uib-datepicker-popup datepicker-options="datepickerOptions" datepicker-append-to-body="true" is-open="isOpen" ng-model="datePickerValue" ng-change="changeDate($event)" popup-placement="auto top"/></div>';
             return html;
         },
         require: ['?^uiGrid', '?^uiGridRenderContainer'],
@@ -11,7 +11,11 @@ app.directive('uiGridEditDatepicker', ['$timeout', '$document', 'uiGridConstants
         compile: function() {
             return {
                 pre: function($scope, $elm, $attrs) {
-
+                    if ($attrs.datepickerOptions){
+                        if ($scope.col.grid.appScope[$attrs.datepickerOptions]){
+                            $scope.datepickerOptions = $scope.col.grid.appScope[$attrs.datepickerOptions];
+                        }
+                    }
                 },
                 post: function($scope, $elm, $attrs, controllers) {
                     var setCorrectPosition = function() {

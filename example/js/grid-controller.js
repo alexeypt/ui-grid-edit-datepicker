@@ -10,6 +10,11 @@ app.controller('GridController', ['$scope', function ($scope) {
 
     $scope.data = [];
 
+    $scope.datepickerOptions = {
+        maxDate: new Date(2020, 1, 1),
+        minDate: new Date(2010, 1, 1)
+    };
+
     var generateData = function() {
       for (var i = 0, i_length = 30; i < i_length; i++)   {
           $scope.data.push({
@@ -43,7 +48,7 @@ app.controller('GridController', ['$scope', function ($scope) {
             { name: 'Date',
                 field: 'date',
                 cellFilter: 'textDate:"M/d/yyyy"',
-                editableCellTemplate: '<div><form name="inputForm"><div ui-grid-edit-datepicker ng-class="\'colt\' + col.uid"></div></form></div>'
+                editableCellTemplate: '<div><form name="inputForm"><div ui-grid-edit-datepicker datepicker-options="datepickerOptions" ng-class="\'colt\' + col.uid"></div></form></div>'
             }
         ],
         enableCellEditOnFocus: true

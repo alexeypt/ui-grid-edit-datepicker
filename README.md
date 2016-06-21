@@ -23,6 +23,30 @@ This directive provides ability to use [Bootstrap datepicker](https://angular-ui
   }
   ```
 
+  If you'd like to specify additional settings for [Bootstrap Datepicker](https://angular-ui.github.io/bootstrap/#/datepicker), you should declare object with settings in Grid scope and pass object's name in **datepicker-options** attribute like in the following example:
+
+  ```
+    $scope.datepickerOptions = {
+        maxDate: new Date(2020, 1, 1),
+        minDate: new Date(2010, 1, 1)
+    };
+
+    ...
+
+    $scope.gridOptions = {
+        columnDefs: [
+            ...
+            { name: 'Date',
+                field: 'date',
+                cellFilter: 'textDate:"M/d/yyyy"',
+                editableCellTemplate: '<div><form name="inputForm"><div ui-grid-edit-datepicker datepicker-options="datepickerOptions" ng-class="\'colt\' + col.uid"></div></form></div>'
+            }
+        ],
+        enableCellEditOnFocus: true
+    };
+  ```
+Full Plunker example: http://plnkr.co/edit/lMrVPfLuHfSgWmtlxG9G
+
 **Note!** If you don't use jQuery, you should comment calling the `setCorrectPosition()` in directive. In this case datepicker will be placed in grid according to the standard behavior.
 
 Plunker example: ~~http://plnkr.co/edit/4mNr86cN6wFOLYQ02QND~~ http://plnkr.co/edit/K64eD0COYBvwwZIq57wZ
