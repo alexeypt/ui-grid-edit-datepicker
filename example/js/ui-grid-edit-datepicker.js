@@ -3,7 +3,7 @@ var app = angular.module('ui.grid.edit');
 app.directive('uiGridEditDatepicker', ['$timeout', '$document', 'uiGridConstants', 'uiGridEditConstants', function($timeout, $document, uiGridConstants, uiGridEditConstants) {
     return {
         template: function(element, attrs) {	
-			var html = '<div class="datepicker-wrapper" ><input type="text" uib-datepicker-popup datepicker-options="datepickerOptions" datepicker-append-to-body="true" is-open="isOpen" ng-model="datePickerValue" ng-change="changeDate($event)" popup-placement="auto top"/></div>';
+			var html = '<div class="datepicker-wrapper" ><input type="text" uib-datepicker-popup datepicker-options="datepickerOptions" datepicker-append-to-body="true" is-open="isOpen" ng-model="datePickerValue" ng-change="changeDate($event)" ng-keydown="editDate($event)" popup-placement="auto top"/></div>';
             return html;
         },
         require: ['?^uiGrid', '?^uiGridRenderContainer'],
@@ -120,9 +120,19 @@ app.directive('uiGridEditDatepicker', ['$timeout', '$document', 'uiGridConstants
                         $scope.stopEdit(evt);
                     };
 
+                    $scope.editDate = function(evt) {
+                        if (evt.keyCode > 48){
+                            $scope.datePickerValue = new Date($scope.row.entity[$scope.col.field]);
+                        }
+                    };
+
                     $scope.changeDate = function (evt) {
-						$scope.row.entity[$scope.col.field] = $scope.datePickerValue;
-                        $scope.stopEdit(evt);
+                        if (angular.isDate($scope.datePickerValue)) {
+                            $scope.row.entity[$scope.col.field] = $scope.datePickerValue;
+                            $scope.stopEdit(evt);
+                        } else {
+                            $scope.datePickerValue = new Date($scope.row.entity[$scope.col.field]);
+                        }
                     };
 
                     $scope.$on(uiGridEditConstants.events.BEGIN_CELL_EDIT, function () {

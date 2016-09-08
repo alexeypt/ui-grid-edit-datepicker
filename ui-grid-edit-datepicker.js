@@ -3,7 +3,7 @@ var app = angular.module('ui.grid.edit');
 app.directive('uiGridEditDatepicker', ['$timeout', '$document', 'uiGridConstants', 'uiGridEditConstants', function($timeout, $document, uiGridConstants, uiGridEditConstants) {
     return {
         template: function(element, attrs) {
-            var html = '<div class="datepicker-wrapper" ><input type="text" uib-datepicker-popup datepicker-append-to-body="true" is-open="isOpen" ng-model="datePickerValue" ng-change="changeDate($event)"/></div>';
+            var html = '<div class="datepicker-wrapper" ><input type="text" uib-datepicker-popup datepicker-options="datepickerOptions" datepicker-append-to-body="true" is-open="isOpen" ng-model="datePickerValue" ng-change="changeDate($event)" ng-keydown="editDate($event)" popup-placement="auto top"/></div>';
             return html;
         },
         require: ['?^uiGrid', '?^uiGridRenderContainer'],
@@ -11,7 +11,11 @@ app.directive('uiGridEditDatepicker', ['$timeout', '$document', 'uiGridConstants
         compile: function() {
             return {
                 pre: function($scope, $elm, $attrs) {
-
+                    if ($attrs.datepickerOptions){
+                        if ($scope.col.grid.appScope[$attrs.datepickerOptions]){
+                            $scope.datepickerOptions = $scope.col.grid.appScope[$attrs.datepickerOptions];
+                        }
+                    }
                 },
                 post: function($scope, $elm, $attrs, controllers) {
                     var setCorrectPosition = function() {
@@ -29,7 +33,7 @@ app.directive('uiGridEditDatepicker', ['$timeout', '$document', 'uiGridConstants
                             offset: cellElement.offset()
                         };
 
-                        var datepickerElement = $('body > .dropdown-menu');
+                        var datepickerElement = $('body > .dropdown-menu, body > div > .dropdown-menu');
                         var datepickerPosition = {
                             width: datepickerElement.outerWidth(),
                             height: datepickerElement.outerHeight()
@@ -116,9 +120,19 @@ app.directive('uiGridEditDatepicker', ['$timeout', '$document', 'uiGridConstants
                         $scope.stopEdit(evt);
                     };
 
+                    $scope.editDate = function(evt) {
+                        if (evt.keyCode > 48){
+                            $scope.datePickerValue = new Date($scope.row.entity[$scope.col.field]);
+                        }
+                    };
+
                     $scope.changeDate = function (evt) {
-                        $scope.row.entity[$scope.col.field] = $scope.datePickerValue;
-                        $scope.stopEdit(evt);
+                        if (angular.isDate($scope.datePickerValue)) {
+                            $scope.row.entity[$scope.col.field] = $scope.datePickerValue;
+                            $scope.stopEdit(evt);
+                        } else {
+                            $scope.datePickerValue = new Date($scope.row.entity[$scope.col.field]);
+                        }
                     };
 
                     $scope.$on(uiGridEditConstants.events.BEGIN_CELL_EDIT, function () {
@@ -134,7 +148,7 @@ app.directive('uiGridEditDatepicker', ['$timeout', '$document', 'uiGridConstants
 
                     $scope.$on('$destroy', function () {
                         angular.element(window).off('click', onWindowClick);
-                        $('body > .dropdown-menu').remove();
+                        $('body > .dropdown-menu, body > div > .dropdown-menu').remove();
                     });
 
                     $scope.stopEdit = function(evt) {
