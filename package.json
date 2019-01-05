@@ -1,0 +1,12 @@
+{
+  "name": "ui-grid-edit-datepicker",
+  "version": "1.0.0",
+  "description": "AngularJS directive providing the ability to use Bootstrap datepicker for editing dates in UI Grid",
+  "main": "ui-grid-edit-datepicker.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Joiler/ui-grid-edit-datepicker"
+  },
+  "author": "https://github.com/Joiler",
+  "license": "MIT"
+}
