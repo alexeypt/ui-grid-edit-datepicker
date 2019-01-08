@@ -1,10 +1,22 @@
 var app = angular.module('ui.grid.edit');
 
-app.directive('uiGridEditDatepicker', ['$timeout', '$document', 'uiGridConstants', 'uiGridEditConstants', function($timeout, $document, uiGridConstants, uiGridEditConstants) {
+app.provider('uiGridEditDatepickerCustomTemplate', function() {
+    var template = false;
+    return {
+        set: function(_template_) {
+            template = _template_;
+        },
+        $get: function() {
+            return template;
+        }
+    }
+});
+
+app.directive('uiGridEditDatepicker', ['$timeout', '$document', 'uiGridConstants', 'uiGridEditConstants', 'uiGridEditDatepickerCustomTemplate', function($timeout, $document, uiGridConstants, uiGridEditConstants, uiGridEditDatepickerCustomTemplate) {
     return {
         template: function(element, attrs) {
             var html = '<div class="datepicker-wrapper" ><input type="text" uib-datepicker-popup datepicker-options="datepickerOptions" datepicker-append-to-body="true" is-open="isOpen" ng-model="datePickerValue" ng-change="changeDate($event)" ng-keydown="editDate($event)" popup-placement="auto top"/></div>';
-            return html;
+            return uiGridEditDatepickerCustomTemplate || html;
         },
         require: ['?^uiGrid', '?^uiGridRenderContainer'],
         scope: true,
